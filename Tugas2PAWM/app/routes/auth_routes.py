@@ -4,10 +4,8 @@ from app import mongo, bcrypt
 from bson.objectid import ObjectId
 from app.models import User
 import re
-from flask_cors import CORS, cross_origin
 
 auth_bp = Blueprint('auth', __name__)
-CORS(auth_bp, origins="http://127.0.0.1:5500")
 
 def is_valid_email(email):
     email_regex = r'^[\w\.-]+@[\w\.-]+\.\w+$'

@@ -8,7 +8,6 @@ from flask_cors import CORS
 from bson import ObjectId
 from app.models import User
 
-
 # Initialize extensions
 mongo = PyMongo()
 bcrypt = Bcrypt()
@@ -24,7 +23,6 @@ def create_app():
     # Initialize extensions with the app
     mongo.init_app(app)
     bcrypt.init_app(app)
-    login_manager = LoginManager()
     login_manager.init_app(app)
     CORS(app, origins=["http://127.0.0.1:5500", "https://firsaaa.github.io"])
 
@@ -37,13 +35,14 @@ def create_app():
     from app.routes.auth_routes import auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
 
-    # Register the progress blueprint
     from app.routes.progress_routes import progress_bp
     app.register_blueprint(progress_bp, url_prefix='/progress')
 
-    # Optional: Add a simple home route for testing
     @app.route('/')
     def home():
         return "Welcome to the Flask Application!"
 
     return app
+
+# Create a WSGI application instance
+app = create_app()

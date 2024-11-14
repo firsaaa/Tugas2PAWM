@@ -3,9 +3,14 @@ from flask_login import login_user, logout_user
 from app import mongo, bcrypt
 from bson.objectid import ObjectId
 from app.models import User
-
+import re
 
 auth_bp = Blueprint('auth', __name__)
+
+# Function to validate email format
+def is_valid_email(email):
+    email_regex = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    return re.match(email_regex, email)
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
@@ -28,6 +33,8 @@ def register():
     users_collection.insert_one(new_user)
 
     return jsonify({"message": "User registered successfully"}), 201
+
+    
 
 @auth_bp.route('/login', methods=['POST'])
 def login():

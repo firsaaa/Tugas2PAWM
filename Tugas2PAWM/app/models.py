@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from flask_login import LoginManager
 
 app = Flask(__name__)
 app.config.from_object('config.Config')
@@ -13,6 +14,11 @@ class User(UserMixin):
         self.id = str(user_data["_id"])  # MongoDB uses '_id' field, so we convert it to a string for compatibility
         self.username = user_data["username"]
         self.email = user_data["email"]
+        self.password = user_data['password']
+        # for progress
+        self.progress = user_data.get("progress", 0)
+        self.simulationResults = user_data.get("simulationResults", [])
+        self.additionalInfo = user_data.get("additionalInfo", {})
     
     @staticmethod
     def from_mongo(user_data):

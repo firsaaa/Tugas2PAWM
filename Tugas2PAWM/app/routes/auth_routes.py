@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_user, logout_user
 from app import mongo, bcrypt
 from bson.objectid import ObjectId
+from app.models import User
 
 
 auth_bp = Blueprint('auth', __name__)
@@ -36,19 +37,23 @@ def login():
         password = data.get('password')
 
         users_collection = mongo.db.users  # Reference to the 'users' collection in MongoDB
-        user = users_collection.find_one({"email": email})
+        user_data = users_collection.find_one({"email": email})
 
-        if user:
+        if user_data:
             # Use bcrypt to check the hashed password
-            if bcrypt.check_password_hash(user['password'], password):
+            if bcrypt.check_password_hash(user_data['password'], password):
+                # Create a User instance using the from_mongo method
+                user = User.from_mongo(user_data)
+                login_user(user)  # Log the user in
                 return jsonify({"message": "Logged in successfully"}), 200
             else:
                 return jsonify({"error": "Invalid password"}), 401
         else:
-            return jsonify({"error": "User not found"}), 404
+            return jsonify({"error": "User  not found"}), 404
     except Exception as e:
-        print(f"Error during login: {e}")  # This will print the exact error to the console
-        return jsonify({"error": "An error occurred during login"}), 500
+        # Log the error details
+        print(f"Error during login: {e}")  # Log the error for debugging
+        return jsonify({"error": "An error occurred during login", "details": str(e)}), 500
 
 @auth_bp.route('/logout', methods=['POST'])
 def logout():

@@ -32,13 +32,19 @@ def save_progress():
 @login_required
 def get_progress():
     users_collection = mongo.db.users
-    user = users_collection.find_one({"_id": current_user.id})
+    print(f"Current User ID: {current_user.id}")
+
+    # Convert current_user.id back to ObjectId for the query
+    user = users_collection.find_one({"_id": ObjectId(current_user.id)})
 
     if user:
+        print("User  found:", user)
         return jsonify({
             "progress": user.get("progress", 0),
             "simulationResults": user.get("simulationResults", []),
             "additionalInfo": user.get("additionalInfo", {})
         }), 200
     else:
-        return jsonify({"error": "User not found"}), 404
+        # Debugging print if user not found
+        print("User  not found.")
+        return jsonify({"error": "User  not found"}), 404

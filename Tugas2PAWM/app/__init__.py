@@ -5,6 +5,9 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from config import Config
 from flask_cors import CORS
+from bson import ObjectId
+from app.models import User
+
 
 # Initialize extensions
 mongo = PyMongo()
@@ -14,10 +17,14 @@ login_manager = LoginManager()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    app.secret_key = 'b0d659cdba453b7b7af7746dad3c6f8aa64b89400d4948d7'
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
     # Initialize extensions with the app
     mongo.init_app(app)
     bcrypt.init_app(app)
+    login_manager = LoginManager()
     login_manager.init_app(app)
     CORS(app, origins=["http://127.0.0.1:5500", "https://firsaaa.github.io"])
 

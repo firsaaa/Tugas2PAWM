@@ -8,6 +8,7 @@ app = Flask(__name__)
 app.config.from_object('config.Config')
 mongo = PyMongo(app)
 login_manager = LoginManager(app)
+CORS(app)
 
 class User(UserMixin):
     def __init__(self, user_data):

@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
-from flask_login import LoginManager
+from flask_login import UserMixin, LoginManager, login_user
+from bson import ObjectId
 
 app = Flask(__name__)
 app.config.from_object('config.Config')
@@ -23,6 +23,21 @@ class User(UserMixin):
     @staticmethod
     def from_mongo(user_data):
         return User(user_data) if user_data else None
+    
+    def get_id(self):
+        return self.id
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
 
 @login_manager.user_loader
 def load_user(user_id):

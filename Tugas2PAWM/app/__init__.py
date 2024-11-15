@@ -1,4 +1,4 @@
-# app/__init__.py
+import os  # Import the os module
 from flask import Flask
 from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
@@ -16,15 +16,16 @@ login_manager = LoginManager()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-    app.secret_key = 'b0d659cdba453b7b7af7746dad3c6f8aa64b89400d4948d7'
-    app.config['SESSION_COOKIE_HTTPONLY'] = True
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
+    # Set the MongoDB URI from an environment variable
+    app.config["MONGO_URI"] = os.environ.get("MONGO_URI")  # Ensure this is set
+    mongo = PyMongo(app)
 
     # Initialize extensions with the app
     mongo.init_app(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
-    CORS(app, origins=["http://127.0.0.1:5500", "https://firsaaa.github.io"])
+    CORS(app, origins=["https://auth-testing-qfda.onrender.com"])
 
     @login_manager.user_loader
     def load_user(user_id):

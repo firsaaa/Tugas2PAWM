@@ -25,6 +25,7 @@ def create_app():
     mongo.init_app(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
+
     CORS(app, origins=["https://auth-testing-qfda.onrender.com"])
 
     @login_manager.user_loader

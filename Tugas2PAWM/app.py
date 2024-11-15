@@ -2,8 +2,10 @@ from quart import Quart, request, jsonify
 import asyncpg
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import Config
+from quart_cors import cors
 
 app = Quart(__name__)
+app = cors(app)
 
 async def get_db_connection():
     return await asyncpg.create_pool(dsn=Config.DATABASE_URL)
@@ -46,4 +48,4 @@ async def login():
     return jsonify({"message": "Login successful"}), 200
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000, debug=True)

@@ -37,17 +37,32 @@ def create_app():
     from app.routes.progress_routes import progress_bp
     app.register_blueprint(progress_bp, url_prefix='/progress')
 
-    @app.route('/test-mongo')
+    @app.route('/test-mongo', methods=['GET'])
     def test_mongo():
         try:
-            # Attempt to list the collections to verify connection
+            # Try to list collections to verify MongoDB connection
             collections = mongo.db.list_collection_names()
             return jsonify({"collections": collections}), 200
         except Exception as e:
-            # Log the error to the console
-            print(f"MongoDB connection error: {e}")
-        return jsonify({"error": "Failed to connect to MongoDB", "details": str(e)}), 500
+            # Log error and return a failure message
+            app.logger.error(f"MongoDB connection error: {e}")
+            return jsonify({"error": "Failed to connect to MongoDB"}), 500
 
+
+    @app.route('/test-mongo-connection')
+    def test_mongo_connection():
+        try:
+            print("Attempting to connect to MongoDB...")
+            # Attempt to list the collections to verify connection
+            collections = mongo.db.list_collection_names()
+            print("Connected successfully. Collections:", collections)
+            return jsonify({"collections": collections}), 200
+        except Exception as e:
+            print(f"MongoDB connection error: {e}")
+            logging.error(f"MongoDB connection error: {e}")
+            return jsonify({"error": "Failed to connect to MongoDB"}), 500
+
+    
 
     @app.route('/')
     def home():

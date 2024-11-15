@@ -19,10 +19,6 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # Set the MongoDB URI and Secret Key from environment variables
-    app.config["MONGO_URI"] = os.getenv("MONGO_URI")
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "default_secret")
-
     # Initialize extensions with the app
     mongo.init_app(app)
     bcrypt.init_app(app)

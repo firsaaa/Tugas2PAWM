@@ -17,13 +17,13 @@ login_manager = LoginManager()
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config["MONGO_URI"] = os.getenv("MONGO_URI")
 
     # Initialize extensions with the app
     mongo.init_app(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
-    CORS(app, origins=["https://firsaaa.github.io"])
+    CORS(app, origins=["https://firsaaa.github.io", "http://127.0.0.1:5500"]) 
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -36,6 +36,18 @@ def create_app():
 
     from app.routes.progress_routes import progress_bp
     app.register_blueprint(progress_bp, url_prefix='/progress')
+
+    @app.route('/test-mongo')
+    def test_mongo():
+        try:
+            # Attempt to list the collections to verify connection
+            collections = mongo.db.list_collection_names()
+            return jsonify({"collections": collections}), 200
+        except Exception as e:
+            # Log the error to the console
+            print(f"MongoDB connection error: {e}")
+        return jsonify({"error": "Failed to connect to MongoDB", "details": str(e)}), 500
+
 
     @app.route('/')
     def home():

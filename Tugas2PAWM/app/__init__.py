@@ -1,4 +1,3 @@
-import os  # Import the os module
 from flask import Flask
 from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
@@ -6,7 +5,10 @@ from flask_login import LoginManager
 from config import Config
 from flask_cors import CORS
 from bson import ObjectId
-from app.models import User
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Initialize extensions
 mongo = PyMongo()
@@ -17,23 +19,22 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # Set the MongoDB URI from an environment variable
-    app.config["MONGO_URI"] = os.environ.get("MONGO_URI")  # Ensure this is set
-    mongo = PyMongo(app)
+    # Set the MongoDB URI and Secret Key from environment variables
+    app.config["MONGO_URI"] = os.getenv("MONGO_URI")
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "default_secret")
 
     # Initialize extensions with the app
     mongo.init_app(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
-
-    CORS(app, origins=["https://auth-testing-qfda.onrender.com"])
+    CORS(app, origins=["https://firsaaa.github.io"])
 
     @login_manager.user_loader
     def load_user(user_id):
         user_data = mongo.db.users.find_one({"_id": ObjectId(user_id)})
         return User(user_data) if user_data else None
 
-    # Register blueprints
+    # Register blueprints within the application context
     from app.routes.auth_routes import auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
 

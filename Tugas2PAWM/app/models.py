@@ -4,10 +4,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, LoginManager, login_user
 from bson import ObjectId
 from flask_cors import CORS
+from app import mongo
 
 app = Flask(__name__)
 app.config.from_object('config.Config')
-mongo = PyMongo(app)
 login_manager = LoginManager(app)
 CORS(app)
 

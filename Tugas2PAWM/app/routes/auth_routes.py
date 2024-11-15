@@ -15,7 +15,7 @@ def is_valid_email(email):
     return re.match(email_regex, email)
 
 # Register Route
-@auth_bp.route('/auth/register', methods=['POST'])
+@auth_bp.route('register', methods=['POST'])
 def register():
     try:
         data = request.get_json()
@@ -50,7 +50,7 @@ def register():
         return jsonify({"error": "An error occurred during registration", "details": str(e)}), 500
 
 # Login Route
-@auth_bp.route('/auth/login', methods=['POST'])
+@auth_bp.route('login', methods=['POST'])
 def login():
     try:
         data = request.get_json()
@@ -84,7 +84,7 @@ def login():
         return jsonify({"error": "An error occurred during login", "details": str(e)}), 500
 
 # Logout Route
-@auth_bp.route('/auth/logout', methods=['POST'])
+@auth_bp.route('logout', methods=['POST'])
 def logout():
     logout_user()
     return jsonify({"message": "Logged out successfully"}), 200
